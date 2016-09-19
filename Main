@@ -1,0 +1,29 @@
+
+package javaapplication1;
+import java.util.Scanner;
+
+public class JavaApplication1 
+{
+    public static void main(String[] args) 
+    {
+        double myTotal;
+        System.out.println("Please enter income income amount (enter 0 if no more income): ");
+        myTotal = totalIncome();
+        System.out.println("Total income: " + myTotal);
+    }
+    
+    public static double totalIncome()
+    {
+      Scanner input = new Scanner(System.in); 
+      double additionalIncome = 1;
+      double total = 0;
+      
+      while(additionalIncome != 0)
+      {
+          additionalIncome = input.nextDouble();
+          total = total + additionalIncome;
+      }
+      
+      return total;
+    }
+}
