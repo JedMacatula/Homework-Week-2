@@ -1,29 +1,62 @@
 
-package javaapplication1;
+package javaapplication2;
 import java.util.Scanner;
 
-public class JavaApplication1 
+public class JavaApplication2 
 {
     public static void main(String[] args) 
     {
-        double myTotal;
-        System.out.println("Please enter income income amount (enter 0 if no more income): ");
-        myTotal = totalIncome();
-        System.out.println("Total income: " + myTotal);
+        double myTotalIncome, myTotalDeductions , adjustedGrossIncome;
+        
+        myTotalIncome = totalIncome();
+        System.out.println("Total income: " + myTotalIncome);
+        myTotalDeductions = totalDeduction();
+        System.out.println("Total deductions: " + myTotalDeductions);
+        adjustedGrossIncome = myTotalIncome - myTotalDeductions;
+        System.out.println("Adjusted gross income: " + adjustedGrossIncome);
+        double answer = calculateTaxes(adjustedGrossIncome);
+        System.out.println(answer);
     }
     
     public static double totalIncome()
     {
-      Scanner input = new Scanner(System.in); 
       double additionalIncome = 1;
       double total = 0;
       
       while(additionalIncome != 0)
       {
+          System.out.print("Please enter income amount (enter 0 if no more income): ");
+          Scanner input = new Scanner(System.in); 
           additionalIncome = input.nextDouble();
           total = total + additionalIncome;
       }
       
       return total;
+    }
+    
+    public static double totalDeduction()
+    {
+      double additionalDeduction = 1;
+      double total = 0;
+      
+      while(additionalDeduction != 0)
+      {
+          System.out.print("Please enter deduction amount (enter 0 if no more deduction): ");
+          Scanner input = new Scanner(System.in); 
+          additionalDeduction = input.nextDouble();
+          total = total + additionalDeduction;
+      }
+      
+      return total;
+    }
+    
+    public static double calculateTaxes(double inputAGI)
+    {
+        double totalTaxes = 0;
+        
+        double[] taxBracketsPercentages = {.1, .15, .25, .28, .33, .35, .396};
+        double[] taxBracketWidths = {9275, 28375, 53500, 99000, 223200, 1700};
+        
+        return totalTaxes;
     }
 }
