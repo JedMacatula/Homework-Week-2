@@ -1,12 +1,13 @@
-
-package javaapplication2;
+package javaapplication4;
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
-public class JavaApplication2 
+public class JavaApplication4 
 {
     public static void main(String[] args) 
     {
-        double myTotalIncome, myTotalDeductions , adjustedGrossIncome;
+        DecimalFormat df = new DecimalFormat("#.00");
+        long myTotalIncome, myTotalDeductions , adjustedGrossIncome;
         
         myTotalIncome = totalIncome();
         System.out.println("Total income: " + myTotalIncome);
@@ -15,47 +16,79 @@ public class JavaApplication2
         adjustedGrossIncome = myTotalIncome - myTotalDeductions;
         System.out.println("Adjusted gross income: " + adjustedGrossIncome);
         double answer = calculateTaxes(adjustedGrossIncome);
-        System.out.println(answer);
+        System.out.println("Total taxes: " + df.format(answer));
+        System.out.println("Taxes paid as % of AGI: " + df.format(answer / adjustedGrossIncome));
+        System.out.println("Taxes paid as % of GI: " + df.format(answer / myTotalIncome));
     }
     
-    public static double totalIncome()
+    public static long totalIncome()
     {
-      double additionalIncome = 1;
-      double total = 0;
+      long additionalIncome = 1;
+      long total = 0;
       
       while(additionalIncome != 0)
       {
           System.out.print("Please enter income amount (enter 0 if no more income): ");
           Scanner input = new Scanner(System.in); 
-          additionalIncome = input.nextDouble();
+          additionalIncome = input.nextLong();
           total = total + additionalIncome;
       }
       
       return total;
     }
     
-    public static double totalDeduction()
+    public static long totalDeduction()
     {
-      double additionalDeduction = 1;
-      double total = 0;
+      long additionalDeduction = 1;
+      long total = 0;
       
       while(additionalDeduction != 0)
       {
           System.out.print("Please enter deduction amount (enter 0 if no more deduction): ");
           Scanner input = new Scanner(System.in); 
-          additionalDeduction = input.nextDouble();
+          additionalDeduction = input.nextLong();
           total = total + additionalDeduction;
       }
       
       return total;
     }
     
-    public static double calculateTaxes(double inputAGI)
+    public static double calculateTaxes(long inputAGI)
     {
+        double taxWithinBracket;
         double totalTaxes = 0;
+        long leftOverAGI = inputAGI;
+        int index2 = 0;
+        int numberOfBrackets = 0;
+        DecimalFormat df = new DecimalFormat("#.00");
         
         double[] taxBracketsPercentages = {.1, .15, .25, .28, .33, .35, .396};
         double[] taxBracketWidths = {9275, 28375, 53500, 99000, 223200, 1700};
+        long[] taxBracketLow = {0, 9275, 37650, 91150, 190150, 413350, 415050};
+        
+        for (int i = 0; i < 7; i++)
+        {
+            if (inputAGI > taxBracketLow[i])
+            {
+                numberOfBrackets = i;
+            }
+        }
+        
+        for (int i = 0; i < numberOfBrackets; i++)
+        {
+            taxWithinBracket = taxBracketWidths[i] * taxBracketsPercentages[i];
+            totalTaxes = totalTaxes + taxWithinBracket;
+            System.out.println("Taxes paid within bracket " + (i+1) + ": " + df.format(taxWithinBracket));
+        }
+        
+        leftOverAGI = inputAGI - taxBracketLow[numberOfBrackets];
+        System.out.println("Taxes paid within bracket " + (numberOfBrackets + 1) + ": " + df.format(leftOverAGI * taxBracketsPercentages[numberOfBrackets]));
+        totalTaxes = totalTaxes + leftOverAGI * taxBracketsPercentages[numberOfBrackets];
+        
+        for (int j = numberOfBrackets + 2; j < 8; j++)
+        {
+            System.out.println("Taxes paid within bracket " + (j) + ": " + 0);
+        }
         
         return totalTaxes;
     }
