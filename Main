@@ -1,95 +1,168 @@
-package javaapplication4;
-import java.text.DecimalFormat;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 
-public class JavaApplication4 
+public class Main
 {
     public static void main(String[] args) 
     {
+        File myStocksFile = new File("stocks.txt");
+        File myBondsFile = new File("bonds.txt");
+        Scanner inputScanner = new Scanner(System.in);
         DecimalFormat df = new DecimalFormat("#.00");
-        long myTotalIncome, myTotalDeductions , adjustedGrossIncome;
+        int age, DRA, DRS, yearsUntilRetire, choice, toAdd, time;
+        int index = 0;
+        double[] myListOfStocks = new double[50];
+        double[] myListOfBonds = new double[50];
         
-        myTotalIncome = totalIncome();
-        System.out.println("Total income: " + myTotalIncome);
-        myTotalDeductions = totalDeduction();
-        System.out.println("Total deductions: " + myTotalDeductions);
-        adjustedGrossIncome = myTotalIncome - myTotalDeductions;
-        System.out.println("Adjusted gross income: " + adjustedGrossIncome);
-        double answer = calculateTaxes(adjustedGrossIncome);
-        System.out.println("Total taxes: " + df.format(answer));
-        System.out.println("Taxes paid as % of AGI: " + df.format(answer / adjustedGrossIncome));
-        System.out.println("Taxes paid as % of GI: " + df.format(answer / myTotalIncome));
-    }
-    
-    public static long totalIncome()
-    {
-      long additionalIncome = 1;
-      long total = 0;
-      
-      while(additionalIncome != 0)
-      {
-          System.out.print("Please enter income amount (enter 0 if no more income): ");
-          Scanner input = new Scanner(System.in); 
-          additionalIncome = input.nextLong();
-          total = total + additionalIncome;
-      }
-      
-      return total;
-    }
-    
-    public static long totalDeduction()
-    {
-      long additionalDeduction = 1;
-      long total = 0;
-      
-      while(additionalDeduction != 0)
-      {
-          System.out.print("Please enter deduction amount (enter 0 if no more deduction): ");
-          Scanner input = new Scanner(System.in); 
-          additionalDeduction = input.nextLong();
-          total = total + additionalDeduction;
-      }
-      
-      return total;
-    }
-    
-    public static double calculateTaxes(long inputAGI)
-    {
-        double taxWithinBracket;
-        double totalTaxes = 0;
-        long leftOverAGI = inputAGI;
-        int index2 = 0;
-        int numberOfBrackets = 0;
-        DecimalFormat df = new DecimalFormat("#.00");
-        
-        double[] taxBracketsPercentages = {.1, .15, .25, .28, .33, .35, .396};
-        double[] taxBracketWidths = {9275, 28375, 53500, 99000, 223200, 1700};
-        long[] taxBracketLow = {0, 9275, 37650, 91150, 190150, 413350, 415050};
-        
-        for (int i = 0; i < 7; i++)
+        try
         {
-            if (inputAGI > taxBracketLow[i])
+            Scanner fileScanner = new Scanner(myStocksFile);
+            
+            while(fileScanner.hasNextFloat())
             {
-                numberOfBrackets = i;
+                index = 0;
+                myListOfStocks[index] = fileScanner.nextFloat();
+                index++;
             }
         }
-        
-        for (int i = 0; i < numberOfBrackets; i++)
+        catch (FileNotFoundException myException)
         {
-            taxWithinBracket = taxBracketWidths[i] * taxBracketsPercentages[i];
-            totalTaxes = totalTaxes + taxWithinBracket;
-            System.out.println("Taxes paid within bracket " + (i+1) + ": " + df.format(taxWithinBracket));
+            System.out.println("File does not exist.");
         }
         
-        leftOverAGI = inputAGI - taxBracketLow[numberOfBrackets];
-        System.out.println("Taxes paid within bracket " + (numberOfBrackets + 1) + ": " + df.format(leftOverAGI * taxBracketsPercentages[numberOfBrackets]));
-        totalTaxes = totalTaxes + leftOverAGI * taxBracketsPercentages[numberOfBrackets];
-        
-        for (int j = numberOfBrackets + 2; j < 8; j++)
+        try
         {
-            System.out.println("Taxes paid within bracket " + (j) + ": " + 0);
+            Scanner fileScanner = new Scanner(myBondsFile);
+            
+            while(fileScanner.hasNextFloat())
+            {
+                index = 0;
+                myListOfBonds[index] = fileScanner.nextFloat();
+                index++;
+            }
+        }
+        catch (FileNotFoundException myException)
+        {
+            System.out.println("File does not exist.");
         }
         
-        return totalTaxes;
+        System.out.print("Enter age: ");
+        age = inputScanner.nextInt();
+        System.out.print("Enter desired retirement age: ");
+        DRA = inputScanner.nextInt();
+        while (DRA < age)
+        {
+            System.out.print("Enter age that is greater than current age: ");
+            DRA = inputScanner.nextInt();
+        }
+        System.out.print("Enter desired retirement savings: ");
+        DRS = inputScanner.nextInt();
+        yearsUntilRetire = DRA - age;
+        
+        System.out.print("Under the mattress starting balance: ");
+        double UM = inputScanner.nextDouble();
+        System.out.print("Bank savings starting balance: ");
+        double BS = inputScanner.nextDouble();
+        System.out.print("Bonds starting balance: ");
+        double bonds = inputScanner.nextDouble();
+        System.out.print("Stocks starting balance: ");
+        double stocks = inputScanner.nextDouble();
+        System.out.println(" ");
+        
+        while (index < yearsUntilRetire)
+        {
+            System.out.println("1) Under the mattress");
+            System.out.println("2) Bank savings");
+            System.out.println("3) Bonds");
+            System.out.println("4) Stocks");
+            System.out.println("5) Stop investing");
+            
+            choice = 0;
+            while(choice != 5)
+            {
+                choice = inputScanner.nextInt();
+
+                if(choice == 1)
+                {
+                    System.out.print("Amount to invest: ");
+                    UM = UM + inputScanner.nextDouble();
+                    System.out.print("Choose another account (5 to exit): ");
+                }
+                else if(choice == 2)
+                {
+                    System.out.print("Amount to invest: ");
+                    BS = BS + inputScanner.nextDouble();
+                    System.out.print("Choose another account (5 to exit): ");
+                }
+                else if(choice == 3)
+                {
+                    System.out.print("Amount to invest: ");
+                    bonds = bonds + inputScanner.nextDouble();
+                    System.out.print("Choose another account (5 to exit): ");
+                }
+                else if(choice == 4)
+                {
+                    System.out.print("Amount to invest: ");
+                    stocks = stocks + inputScanner.nextDouble();
+                    System.out.print("Choose another account (5 to exit): ");
+                }
+                else if(choice == 5)
+                {
+                    System.out.print("How long would you like to keep these savings amounts: ");
+                    time = inputScanner.nextInt();
+                    for (int i = 0; i < time; i++)
+                    {
+                        UM = underMattress(UM);
+                        BS = bankSavings(BS);
+                        stocks = stocksSavings(i, stocks, myListOfStocks);
+                        bonds = bondsSavings(i, bonds, myListOfBonds);
+                        
+                        System.out.println(" ");
+                        System.out.println("Under Matress Savings: " + df.format(UM));
+                        System.out.println("Bank Savings: " + df.format(BS));
+                        System.out.println("Stock Savings: " + df.format(stocks));
+                        System.out.println("Bond Savings: " + df.format(bonds));
+                    }
+                }
+                else
+                {
+                    System.out.print("That is an invalid choice, try again.");
+                }
+            }
+        }
+    }
+    
+    public static double underMattress(double initualBalance)
+    {
+        return initualBalance;
+    }
+    
+    public static double bankSavings(double initialBalance)
+    {
+        double newBalance;
+        
+        newBalance = initialBalance + initialBalance * .02;
+        
+        return newBalance;
+    }
+    
+    public static double stocksSavings(int numberOfYears, double initialBalance, double[] listOfStocks)
+    {
+        double newBalance = 0;
+        
+        newBalance = initialBalance + initialBalance * listOfStocks[numberOfYears];
+        
+        return newBalance;
+    }
+    
+    public static double bondsSavings(int numberOfYears, double initialBalance, double[] listOfBonds)
+    {
+        double newBalance = 0;
+        
+        newBalance = initialBalance + initialBalance * listOfBonds[numberOfYears];
+        
+        return newBalance;
     }
 }
